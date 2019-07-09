@@ -1,7 +1,7 @@
 function nextGeneration() {
 	console.log('next generation');
 	calculateFitness();
-	console.log("savedBirds:" + savedBirds.length);
+	// console.log("savedBirds:" + savedBirds.length);
 	for (let i = 0; i < TOTAL; i++) {
 		birds[i] = selectOne();
 	}
@@ -30,7 +30,7 @@ function calculateFitness() {
 
 	for(let bird of savedBirds) {
 		bird.fitness = bird.score / sum;
-		console.log(bird.score);
+		// console.log(bird.score);
 	}
 
 }

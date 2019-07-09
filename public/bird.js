@@ -1,3 +1,4 @@
+// exported Bird class
 class Bird {
   constructor(brain) {
     this.y = height / 2;
@@ -14,18 +15,17 @@ class Bird {
     if(brain) {
       this.brain = brain.copy();
     } else {
-      this.brain = new NeuralNetwork(5, 10, 2);
+      this.brain = new NeuralNetwork(5, 10, 1);
     }
     
     this.width = 64;
     this.height = 64;
+    this.icon = birdSprite;
   }
 
   show() {
-      stroke(255);
-      fill(255, 100);
-      ellipse(this.x, this.y, 32, 32);
-    
+    // draw the icon CENTERED around the X and Y coords of the bird object
+    image(this.icon, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);    
   }
 
   up() {
@@ -33,19 +33,16 @@ class Bird {
   }
 
   update() {
-    // this.score++;
     this.velocity += this.gravity;
     this.y += this.velocity;
 
     if(this.y < 0) {
       this.dead = true;
-      // this.score--;
       this.velocity = 0;
       this.y = 0;
     }
     if(this.y > height) {
       this.dead = true;
-      // this.score--;
       this.y = height;
     }
   }
@@ -55,7 +52,7 @@ class Bird {
   }
 
   mutate() {
-    this.brain.mutate(x=>x*0.1);
+    this.brain.mutate(0.1);
   }
 
 
@@ -66,9 +63,8 @@ class Bird {
     inputs[2] = pipe.bottom / height;
     inputs[3] = pipe.x / width;
     inputs[4] = this.velocity / 10;
-    // let inputs = [1.1, 0.3, 0.4, 0.9];
     let output = this.brain.predict(inputs);
-    if(output[0] > output[1]) {
+    if(output > 0.5) {
       this.up();
     }
   }

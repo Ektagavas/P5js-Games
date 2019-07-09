@@ -27,13 +27,17 @@ var counter = 0;
 
 var touched = false;
 var prevTouched = touched;
+let slider;
+var scrollSpeed = 2;
+var x1 = 0;
+var x2;
 
 
 function preload() {
-  pipeBodySprite = loadImage('graphics/pipe_marshmallow_fix.png');
-  pipePeakSprite = loadImage('graphics/pipe_marshmallow_fix.png');
-  birdSprite = loadImage('graphics/train.png');
-  bgImg = loadImage('graphics/background.png');
+  pipeBodySprite = loadImage('graphics/pillar1.jpg');
+  pipePeakSprite = loadImage('graphics/pillar2.jpg');
+  birdSprite = loadImage('graphics/bird.png');
+  bgImg = loadImage('graphics/bg2.png');
 }
 
 function setup() {
@@ -42,26 +46,27 @@ function setup() {
 }
 
 function draw() {
-  background(0);
-
-  if (counter % 100 === 0) {
+  for(let n=0; n < slider.value(); n++) {
+    if (counter % 100 === 0) {
     pipes.push(new Pipe());
-  }
+    }
 
-  counter++;
+    counter++;
+    clear()
+    showBG();
 
   for(let i=0;i<birds.length;i++) {
-    pipe = getClosestPipe();
-    birds[i].think(pipe);
+    cpipe = getClosestPipe();
+    birds[i].think(cpipe);
     birds[i].update();
     birds[i].show();
     
-
-    if(pipe.hits(birds[i])) {
-      birds[i].dead = true;
-    } else if(pipe.pass(birds[i])){
-      birds[i].score++;
-      console.log(birds[i].score);
+    for(let pipe of pipes) {
+      if(pipe.hits(birds[i])) {
+        birds[i].dead = true;
+      } else {
+        birds[i].score++;
+      }
     }
   }
 
@@ -75,7 +80,6 @@ function draw() {
 
   if(birds.length === 0) {
     nextGeneration();
-    // savedBirds = [];
     pipes = [];
     counter = 0;
   }
@@ -87,13 +91,6 @@ function draw() {
     if (pipes[i].offscreen()) {
         pipes.splice(i, 1);
       }
-
-    // for(let j=0; j<birds.length; j++) {
-    //   if(pipes[i].hits(birds[j]) || birds[j].dead == true) {
-    //     birds[j].dead = true;
-    //     savedBirds.push(birds.splice(j, 1)[0]);
-    //   }
-    // }
   }
 
   for(let pipe of pipes) {
@@ -103,95 +100,9 @@ function draw() {
   for(let bird of birds) {
     bird.show();
   }
+  }
 }
 
-// function draw() {
-//   background(0);
-
-//   if (counter % 75 == 0) {
-//     pipes.push(new Pipe());
-//   }
-
-//   counter++;
-
-//   // Draw our background image, then move it at the same speed as the pipes
-//   image(bgImg, bgX, 0, bgImg.width, height);
-//   bgX -= pipes[0].speed * parallax;
-
-//   // this handles the "infinite loop" by checking if the right
-//   // edge of the image would be on the screen, if it is draw a
-//   // second copy of the image right next to it
-//   // once the second image gets to the 0 point, we can reset bgX to
-//   // 0 and go back to drawing just one image.
-//   if (bgX <= -bgImg.width + width) {
-//     image(bgImg, bgX + bgImg.width, 0, bgImg.width, height);
-//     if (bgX <= -bgImg.width) {
-//       bgX = 0;
-//     }
-//   }
-
-//   for (var i = pipes.length - 1; i >= 0; i--) {
-//     pipes[i].update();
-//     pipes[i].show();
-
-//     for (let j=0; j<birds.length; j++) {
-//         if (pipes[i].hits(birds[j])) {
-//         birds[j].dead = true;
-//         savedBirds.push(birds.splice(j, 1)[0]);
-//       }
-      
-//     }
-
-//     if (pipes[i].offscreen()) {
-//       pipes.splice(i, 1);
-//     }
-//   }
-
-//   for (let bird of birds) {
-//     bird.think(pipes);
-//     bird.update();
-//   }
-
-//   if(birds.length == 0) {
-//     nextGeneration();
-//     pipes = [];
-//     counter = 0;
-//   }
-
-//   for(let bird of birds) {
-//     bird.update()
-//     bird.show();
-//   }
-
-//    for (let i = birds.length - 1; i >= 0; i--) {
-//       if (birds[i].dead) {
-//         savedBirds.push(birds.splice(i, 1)[0]);
-//       }
-//     }
-
-//   for(let pipe of pipes) {
-//     pipe.show();
-//   }
-
-//   showScores();
-
-//   // touches is an list that contains the positions of all
-//   // current touch points positions and IDs
-//   // here we check if touches' length is bigger than one
-//   // and set it to the touched var
-//   // touched = (touches.length > 0);
-
-//   // // if user has touched then make bird jump
-//   // // also checks if not touched before
-//   // if (touched && !prevTouched) {
-//   //   bird.up();
-//   // }
-
-//   // // updates prevTouched
-//   // prevTouched = touched;
-
-
-// }
 
 function getClosestPipe() {
   var closest = pipes[0];
@@ -208,42 +119,34 @@ function getClosestPipe() {
     return closest;
 }
 
-function showScores() {
-  textSize(32);
-  text('score: ' + score, 1, 32);
-  text('record: ' + maxScore, 1, 64);
-}
-
-function gameover() {
-  textSize(64);
-  textAlign(CENTER, CENTER);
-  text('GAMEOVER', width / 2, height / 2);
-  textAlign(LEFT, BASELINE);
-  maxScore = max(score, maxScore);
-  isOver = true;
-  noLoop();
-}
 
 function reset() {
   isOver = false;
   score = 0;
   bgX = 0;
   pipes = [];
+  slider = createSlider(1, 100, 1);
   for (var i = 0; i < TOTAL; i++) {
     birds[i] = new Bird();
   }
-  // pipes.push(new Pipe());
   gameoverFrame = frameCount - 1;
   loop();
 }
 
-// function keyPressed() {
-//   if (key === ' ') {
-//     bird.up();
-//     if (isOver) reset(); //you can just call reset() in Machinelearning if you die, because you cant simulate keyPress with code.
-//   }
-// }
+function showBG() {
+  // Draw our background image, then move it at the same speed as the pipes
+  image(bgImg, bgX, 0, bgImg.width, height);
+  bgX -= pipes[0].speed * parallax;
 
-function touchStarted() {
-  if (isOver) reset();
+  // this handles the "infinite loop" by checking if the right
+  // edge of the image would be on the screen, if it is draw a
+  // second copy of the image right next to it
+  // once the second image gets to the 0 point, we can reset bgX to
+  // 0 and go back to drawing just one image.
+  if (bgX <= -bgImg.width + width) {
+    image(bgImg, bgX + bgImg.width, 0, bgImg.width, height);
+    if (bgX <= -bgImg.width) {
+      bgX = 0;
+    }
+  }
 }

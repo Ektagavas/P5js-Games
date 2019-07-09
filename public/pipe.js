@@ -10,7 +10,7 @@ class Pipe {
   constructor() {
     this.spacing = 150;
     this.top = random(height / 6, 3 / 4 * height);
-    this.bottom = height - (this.top + this.spacing);
+    this.bottom = this.top + this.spacing;
 
     this.x = width;
     this.w = 80;
@@ -21,25 +21,25 @@ class Pipe {
   }
 
   hits(bird) {
-    // let halfBirdHeight = bird.height / 2;
-    // let halfBirdwidth = bird.width / 2;
-    // if (bird.y - halfBirdHeight < this.top || bird.y + halfBirdHeight > this.bottom) {
-    //   //if this.w is huge, then we need different collision model
-    //   if (bird.x + halfBirdwidth > this.x && bird.x - halfBirdwidth < this.x + this.w) {
-    //     this.highlight = true;
-    //     this.passed = true;
-    //     return true;
-    //   }
-    // }
-    // this.highlight = false;
-    // return false;
-
-     if (bird.y < this.top || bird.y > height - this.bottom) {
-      if (bird.x > this.x && bird.x < this.x + this.w) {
+    let halfBirdHeight = bird.height / 2;
+    let halfBirdwidth = bird.width / 2;
+    if (bird.y - halfBirdHeight < this.top || bird.y + halfBirdHeight > this.bottom) {
+      //if this.w is huge, then we need different collision model
+      if (bird.x + halfBirdwidth > this.x && bird.x - halfBirdwidth < this.x + this.w) {
+        this.highlight = true;
+        this.passed = true;
         return true;
       }
     }
+    this.highlight = false;
     return false;
+
+    //  if (bird.y < this.top || bird.y > height - this.bottom) {
+    //   if (bird.x > this.x && bird.x < this.x + this.w) {
+    //     return true;
+    //   }
+    // }
+    // return false;
   }
 
   //this function is used to calculate scores and checks if we've went through the pipes
@@ -66,17 +66,17 @@ class Pipe {
   }
 
   show() {
-    // push();
-    // translate(this.x + this.w / 2, this.bottom);
-    // this.drawHalf();
-    // translate(0, -this.spacing);
-    // rotate(PI);
-    // this.drawHalf();
-    // pop();
-    fill(255);
-    rectMode(CORNER);
-    rect(this.x, 0, this.w, this.top);
-    rect(this.x, height - this.bottom, this.w, this.bottom);
+    push();
+    translate(this.x + this.w / 2, this.bottom);
+    this.drawHalf();
+    translate(0, -this.spacing);
+    rotate(PI);
+    this.drawHalf();
+    pop();
+    // fill(255);
+    // rectMode(CORNER);
+    // rect(this.x, 0, this.w, this.top);
+    // rect(this.x, height - this.bottom, this.w, this.bottom);
   }
 
   update() {
